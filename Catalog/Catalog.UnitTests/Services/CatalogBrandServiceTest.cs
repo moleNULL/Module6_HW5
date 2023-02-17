@@ -1,7 +1,7 @@
-﻿using WebAPI_UnitTests.Data;
-using WebAPI_UnitTests.Repositories.Interfaces;
-using WebAPI_UnitTests.Services.Implementations;
-using WebAPI_UnitTests.Services.Interfaces;
+﻿using Catalog.Host.Data;
+using Catalog.Host.Repositories.Interfaces;
+using Catalog.Host.Services.Implementations;
+using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.UnitTests.Services;
 
