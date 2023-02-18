@@ -21,4 +21,8 @@
       <None Include="Properties\launchSettings.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -30,6 +30,13 @@ public class CatalogController : Controller
             TotalItems = catalog.Count,
             TotalPages = (int)Math.Ceiling((decimal)catalog.Count / itemsPage.Value)
         };
+
+        // WORKAROUND TO FIX the issue with resolvement url to a picture: "//11.png" was the result
+        foreach (var item in catalog.Data)
+        {
+            item.PictureUrl = "http://www.alevelwebsite.com/assets/images" + item.PictureUrl.Replace("//", "/");
+        }
+
         var vm = new IndexViewModel()
         {
             CatalogItems = catalog.Data,

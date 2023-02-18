@@ -2085,7 +2085,7 @@
     }
 
     var rect = element.getBoundingClientRect();
-    var scaleX = 1;
+    var sc = 1;
     var scaleY = 1;
 
     if (isHTMLElement(element) && includeScale) {

@@ -1,4 +1,5 @@
-﻿using MVC.Dtos;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using MVC.Dtos;
 using MVC.Models.Enums;
 using MVC.Services.Interfaces;
 using MVC.ViewModels;
@@ -47,42 +48,31 @@ public class CatalogService : ICatalogService
 
     public async Task<IEnumerable<SelectListItem>> GetBrands()
     {
-        await Task.Delay(300);
-        var list = new List<SelectListItem>
-        {
-            new SelectListItem()
-            {
-                Value = "0",
-                Text = "brand 1"
-            },
-            new SelectListItem()
-            {
-                Value = "1",
-                Text = "brand 2"
-            }
-        };
+        var brandsResult = await _httpClient.SendAsync<List<CatalogBrand>, object>(
+            $"{_settings.Value.CatalogUrl}/getbrands", HttpMethod.Post, null);
 
-        return list;
+        var brandsSelectedlist = brandsResult.Select(
+            b => new SelectListItem()
+            {
+                Value = b.Id.ToString(),
+                Text = b.Brand
+            });
+
+        return brandsSelectedlist;
     }
 
     public async Task<IEnumerable<SelectListItem>> GetTypes()
     {
-        await Task.Delay(300);
-        var list = new List<SelectListItem>
-        {
-            new SelectListItem()
-            {
-                Value = "0",
-                Text = "type 1"
-            },
-            
-            new SelectListItem()
-            {
-                Value = "1",
-                Text = "type 2"
-            }
-        };
+        var typesResult = await _httpClient.SendAsync<List<CatalogType>, object>(
+            $"{_settings.Value.CatalogUrl}/gettypes", HttpMethod.Post, null);
 
-        return list;
+        var typesSelectedList = typesResult.Select(
+            t => new SelectListItem()
+            {
+                Value = t.Id.ToString(),
+                Text = t.Type
+            });
+
+        return typesSelectedList;
     }
 }
