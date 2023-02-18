@@ -14,18 +14,28 @@ public class CatalogItemRepository : ICatalogItemRepository
         _dbContext = dbContextWrapper.DbContext;
     }
 
-    public async Task<PaginatedItems<CatalogItemEntity>> GetByPageAsync(int pageIndex, int pageSize)
+    public async Task<PaginatedItems<CatalogItemEntity>> GetByPageAsync(int pageIndex, int pageSize, int? brandFilter, int? typeFilter)
     {
-        var totalItems = await _dbContext.CatalogItems
-            .LongCountAsync();
+        IQueryable<CatalogItemEntity> query = _dbContext.CatalogItems;
 
-        var itemsOnPage = await _dbContext.CatalogItems
-            .Include(i => i.CatalogBrand)
-            .Include(i => i.CatalogType)
-            .OrderBy(c => c.Name)
-            .Skip(pageSize * pageIndex)
-            .Take(pageSize)
-            .ToListAsync();
+        if (brandFilter.HasValue)
+        {
+            query = query.Where(w => w.CatalogBrandId == brandFilter.Value);
+        }
+
+        if (typeFilter.HasValue)
+        {
+            query = query.Where(w => w.CatalogTypeId == typeFilter.Value);
+        }
+
+        var totalItems = await query.LongCountAsync();
+
+        var itemsOnPage = await query.OrderBy(c => c.Name)
+           .Include(i => i.CatalogBrand)
+           .Include(i => i.CatalogType)
+           .Skip(pageSize * pageIndex)
+           .Take(pageSize)
+           .ToListAsync();
 
         return new PaginatedItems<CatalogItemEntity>() { TotalCount = totalItems, Data = itemsOnPage };
     }

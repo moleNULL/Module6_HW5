@@ -1,4 +1,5 @@
 ﻿using MVC.Services.Interfaces;
+using MVC.ViewModels;
 using MVC.ViewModels.CatalogViewModels;
 using MVC.ViewModels.Pagination;
 
@@ -23,6 +24,7 @@ public class CatalogController : Controller
         {
             return View("Error");
         }
+
         var info = new PaginationInfo()
         {
             ActualPage = page.Value,

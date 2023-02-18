@@ -6,6 +6,7 @@ using Catalog.Host.Models.Dtos;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
+using Catalog.Host.Models.Enums;
 
 namespace Catalog.Host.Services.Implementations;
 
@@ -25,11 +26,32 @@ public class CatalogService : BaseDataService<ApplicationDbContext>, ICatalogSer
         _mapper = mapper;
     }
 
-    public async Task<PaginatedItemsResponse<CatalogItemDto>> GetCatalogItemsAsync(int pageSize, int pageIndex)
+    public async Task<PaginatedItemsResponse<CatalogItemDto>?> GetCatalogItemsAsync(int pageSize, int pageIndex, Dictionary<CatalogTypeFilter, int>? filters)
     {
         return await ExecuteSafeAsync(async () =>
         {
-            var result = await _catalogItemRepository.GetByPageAsync(pageIndex, pageSize);
+            int? brandFilter = null;
+            int? typeFilter = null;
+
+            if (filters != null)
+            {
+                if (filters.TryGetValue(CatalogTypeFilter.Brand, out var brand))
+                {
+                    brandFilter = brand;
+                }
+
+                if (filters.TryGetValue(CatalogTypeFilter.Type, out var type))
+                {
+                    typeFilter = type;
+                }
+            }
+
+            var result = await _catalogItemRepository.GetByPageAsync(pageIndex, pageSize, brandFilter, typeFilter);
+            if (result == null)
+            {
+                return null;
+            }
+
             return new PaginatedItemsResponse<CatalogItemDto>()
             {
                 Count = result.TotalCount,

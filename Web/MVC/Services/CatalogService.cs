@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Infrastructure.Services.Interfaces;
 using MVC.Dtos;
 using MVC.Models.Enums;
 using MVC.Services.Interfaces;
@@ -27,21 +27,20 @@ public class CatalogService : ICatalogService
         {
             filters.Add(CatalogTypeFilter.Brand, brand.Value);
         }
-        
+
         if (type.HasValue)
         {
             filters.Add(CatalogTypeFilter.Type, type.Value);
         }
-        
-        var result = await _httpClient.SendAsync<Catalog, 
-           PaginatedItemsRequest<CatalogTypeFilter>>($"{_settings.Value.CatalogUrl}/getcatalogitems",
-           HttpMethod.Post, 
+
+        var result = await _httpClient.SendAsync<Catalog, PaginatedItemsRequest<CatalogTypeFilter>>($"{_settings.Value.CatalogUrl}/getcatalogitems",
+           HttpMethod.Post,
            new PaginatedItemsRequest<CatalogTypeFilter>()
-            {
-                PageIndex = page,
-                PageSize = take,
-                Filters = filters
-            });
+           {
+               PageIndex = page,
+               PageSize = take,
+               Filters = filters
+           });
 
         return result;
     }

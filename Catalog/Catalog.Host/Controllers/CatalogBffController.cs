@@ -5,6 +5,9 @@ using Catalog.Host.Models.Requests;
 using Catalog.Host.Models.Response.GetResponses;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Catalog.Host.Models.Enums;
+using Catalog.Host.Configurations;
 
 namespace Catalog.Host.Controllers;
 
@@ -12,27 +15,25 @@ namespace Catalog.Host.Controllers;
 [Route(ComponentDefaults.DefaultRoute)]
 public class CatalogBffController : ControllerBase
 {
+    private readonly ILogger<CatalogBffController> _logger;
     private readonly ICatalogService _catalogService;
+    private readonly IOptions<CatalogConfig> _config;
 
     public CatalogBffController(
         ILogger<CatalogBffController> logger,
-        ICatalogService catalogService)
+        ICatalogService catalogService,
+        IOptions<CatalogConfig> config)
     {
+        _logger = logger;
         _catalogService = catalogService;
+        _config = config;
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(PaginatedItemsResponse<CatalogItemDto>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(PaginatedItemsResponse<CatalogItemDto>), (int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> GetCatalogItemsAsync(PaginatedItemsRequest request)
+    public async Task<IActionResult> GetCatalogItems(PaginatedItemsRequest<CatalogTypeFilter> request)
     {
-        var result = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex);
-
-        if (result is null)
-        {
-            return BadRequest(result);
-        }
-
+        var result = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex, request.Filters);
         return Ok(result);
     }
 
