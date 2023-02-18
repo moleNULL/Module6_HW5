@@ -38,7 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WebAPI_UnitTests\WebAPI_UnitTests.csproj" />
+      <ProjectReference Include="..\Catalog.Host\Catalog.Host.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-using WebAPI_UnitTests.Data;
-using WebAPI_UnitTests.Data.Entities;
-using WebAPI_UnitTests.Models.Dtos;
-using WebAPI_UnitTests.Models.Response;
-using WebAPI_UnitTests.Repositories.Interfaces;
-using WebAPI_UnitTests.Services.Implementations;
-using WebAPI_UnitTests.Services.Interfaces;
+using Catalog.Host.Data;
+using Catalog.Host.Data.Entities;
+using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Response;
+using Catalog.Host.Repositories.Interfaces;
+using Catalog.Host.Services.Implementations;
+using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.UnitTests.Services;
 
@@ -63,13 +63,15 @@ public class CatalogServiceTest
 
         _catalogItemRepository.Setup(s => s.GetByPageAsync(
             It.Is<int>(i => i == testPageIndex),
-            It.Is<int>(i => i == testPageSize))).ReturnsAsync(pagingPaginatedItemsSuccess);
+            It.Is<int>(i => i == testPageSize),
+            It.IsAny<int?>(),
+            It.IsAny<int?>())).ReturnsAsync(pagingPaginatedItemsSuccess);
 
         _mapper.Setup(s => s.Map<CatalogItemDto>(
             It.Is<CatalogItemEntity>(i => i.Equals(catalogItemSuccess)))).Returns(catalogItemDtoSuccess);
 
         // act
-        var result = await _catalogService.GetCatalogItemsAsync(testPageSize, testPageIndex);
+        var result = await _catalogService.GetCatalogItemsAsync(testPageSize, testPageIndex, null);
 
         // assert
         result.Should().NotBeNull();
@@ -88,10 +90,12 @@ public class CatalogServiceTest
 
         _catalogItemRepository.Setup(s => s.GetByPageAsync(
             It.Is<int>(i => i == testPageIndex),
-            It.Is<int>(i => i == testPageSize))).Returns((Func<PaginatedItemsResponse<CatalogItemDto>>)null!);
+            It.Is<int>(i => i == testPageSize),
+            It.IsAny<int?>(),
+            It.IsAny<int?>())).Returns((Func<PaginatedItemsResponse<CatalogItemDto>>)null!);
 
         // act
-        var result = await _catalogService.GetCatalogItemsAsync(testPageSize, testPageIndex);
+        var result = await _catalogService.GetCatalogItemsAsync(testPageSize, testPageIndex, null);
 
         // assert
         result.Should().BeNull();
